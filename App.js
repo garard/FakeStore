@@ -10,7 +10,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Splash'>
+      <Stack.Navigator initialRouteName='Home'>
 
         <Stack.Screen
           name="Splash"
@@ -35,8 +35,6 @@ export default function App() {
           component={Product}
           options={{ headerShown: false }}
         />
-
-
 
       </Stack.Navigator>
     </NavigationContainer>

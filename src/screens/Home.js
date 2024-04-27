@@ -29,33 +29,33 @@ export default function Home({ route, navigation }) {
 
     useEffect(() => {
         async function getCategories() {
-            setCategories(route.params.categories);
-            if (route.params.categories != null) {
-                setCategories(route.params.categories)
-                setLoading(false)
-                console.log("loaded cateogies from splash")
-            } else {
-                try {
-                    const data = await fetch("https://fakestoreapi.com/products/categories")
-                    const categories = await data.json()
-                    console.log("categories loaded in the try")
-                    setCategories(categories)
-                }
-                catch (e) {
-                    const createTwoButtonAlert = () =>
-                        Alert.alert('Error', 'Failed to fetch categories');
-                    console.error('error fetching address', e)
-                }
-                finally {
-                    setLoading(false)
-                }
+            // setCategories(route.params.categories);
+            // if (route.params.categories != null) {
+            //     setCategories(route.params.categories)
+            //     setLoading(false)
+            //     console.log("loaded cateogies from splash")
+            // } else {
+            try {
+                const data = await fetch("https://fakestoreapi.com/products/categories")
+                const categories = await data.json()
+                // console.log("categories loaded in the try")
+                setCategories(categories)
             }
+            catch (e) {
+                const createTwoButtonAlert = () =>
+                    Alert.alert('Error', 'Failed to fetch categories');
+                console.error('error fetching address', e)
+            }
+            finally {
+                setLoading(false)
+            }
+            // }
         }
         getCategories()
-    }, [categories]);
+    }, []);
 
-    console.log("These categories")
-    console.log(categories)
+    // console.log("These categories")
+    // console.log(categories)
 
 
     return (
