@@ -49,9 +49,9 @@ export default function Category({ route, navigation }) {
                         <Image source={{ uri: item.image }} style={Styles.productImage} />
                     </View>
                     <View style={Styles.infoContainer}>
-                        <Pressable onPress={() => console.log(item)}>
-                            <Text style={Styles.title}>{item.title}</Text>
-                        </Pressable>
+
+                        <Text style={Styles.title}>{item.title}</Text>
+
                         <Text style={Styles.price}>${item.price.toFixed(2)}</Text>
                     </View>
 

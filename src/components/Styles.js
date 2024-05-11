@@ -150,6 +150,11 @@ const Styles = StyleSheet.create({
         color: "green",
     },
 
+    quantity: {
+        fontSize: 20,
+        color: "black",
+    },
+
     navButton: {
         marginHorizontal: 50,
         height: 50,

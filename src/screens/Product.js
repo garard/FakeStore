@@ -3,11 +3,20 @@ import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import Styles from "../components/Styles";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../store/CartSlice";
 
 export default function Product({ route, navigation }) {
+
+    const dispatch = useDispatch();
+
     const { id } = route.params;
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    const AddToCart = () => {
+        dispatch(addToCart({ id: product.id, quantity: 1 }));
+    };
 
     const navToCategory = () => {
         navigation.navigate("Category", { category: product.category });
@@ -55,7 +64,7 @@ export default function Product({ route, navigation }) {
                                 <Ionicons name="arrow-back-circle" color={"black"} size={20} />
                                 <Text>Back</Text>
                             </Pressable>
-                            <Pressable style={Styles.productButton} onPress={() => console.log("added to cart")}>
+                            <Pressable style={Styles.productButton} onPress={AddToCart}>
                                 <Ionicons name="cart" color={"black"} size={20} />
                                 <Text>Add to cart</Text>
                             </Pressable>
