@@ -4,21 +4,17 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import Styles from "../components/Styles";
 import { useSelector, useDispatch } from "react-redux";
-import {
-	increment,
-	decrement,
-	addToCart,
-	displayCart,
-} from "../store/CartSlice";
-import CartBadge from "../store/CartBadge";
-import { NavigationContainer } from "@react-navigation/native";
+import { increment, decrement, addToCart } from "../store/CartSlice";
 
-export default function Cart({ navigation }) {
+export default function MyOrders({ navigation }) {
 	const [products, setProducts] = useState([]);
 	const [cart, setCart] = useState([]);
 	const [total, setTotal] = useState("0");
 	const dispatch = useDispatch();
 
+	const navToCart = () => {
+		navigation.navigate("Cart");
+	};
 	const addToCart = (id) => {
 		dispatch(increment({ id }));
 	};
@@ -31,7 +27,9 @@ export default function Cart({ navigation }) {
 
 	useEffect(() => {
 		let totalCost = 0;
-		cart.forEach((product) => (totalCost += product.price * product.count));
+		cart.forEach(
+			(product) => (totalCost += product.price * product.quantity)
+		);
 		setTotal(totalCost.toFixed(2));
 	}, [cart]);
 
@@ -39,7 +37,7 @@ export default function Cart({ navigation }) {
 		const productsData = products.filter((product) => userCart[product.id]);
 		const cartProductsQuantity = productsData.map((product) => ({
 			...product,
-			count: userCart[product.id].count,
+			quantity: userCart[product.id],
 		}));
 		setCart(cartProductsQuantity);
 	}, [userCart, products]);
@@ -72,22 +70,6 @@ export default function Cart({ navigation }) {
 		getProducts();
 	}, []);
 
-	// useEffect(() => {
-	//     async function getProducts() {
-	//         try {
-	//             const data = await fetch("https://fakestoreapi.com/products/")
-	//             const productsData = await data.json()
-	//             setProducts(productsData)
-	//         }
-	//         catch (e) {
-	//             const createTwoButtonAlert = () =>
-	//                 Alert.alert('Error', 'Failed to fetch products');
-	//             console.error('error fetching products', e)
-	//         }
-	//     }
-	//     getProducts()
-	// }, []);
-
 	const renderProducts = ({ item }) => {
 		return (
 			<View style={Styles.productDisplay}>
@@ -115,7 +97,7 @@ export default function Cart({ navigation }) {
 						<Pressable onPress={() => removeFromCart(item.id)}>
 							<Ionicons name="remove-circle-outline" size={25} />
 						</Pressable>
-						<Text style={Styles.quantity}>{item.count}</Text>
+						<Text style={Styles.quantity}>{item.quantity}</Text>
 						<Pressable onPress={() => addToCart(item.id)}>
 							<Ionicons name="add-circle-outline" size={25} />
 						</Pressable>
@@ -128,42 +110,26 @@ export default function Cart({ navigation }) {
 	return (
 		<SafeAreaView style={Styles.container}>
 			<View style={Styles.header}>
-				<Text style={Styles.categoryText}>Shopping Cart</Text>
+				<Text style={Styles.categoryText}>Orders</Text>
 			</View>
 
 			<View style={Styles.body}>
-				<Pressable
-					style={Styles.navButton}
-					onPress={() => dispatch(displayCart())}
-				>
-					<Ionicons name="home" color={"black"} size={20} />
-
-					<Text>Home</Text>
-				</Pressable>
-				{Object.entries(cart).length === 0 ? (
-					<Text>Your shopping cart is empty.</Text>
-				) : (
-					<View>
-						<Text style={[Styles.categoryText, { paddingTop: 0 }]}>
-							<CartBadge /> Items{"\n"}Total Cost: ${total}
-						</Text>
-						<FlatList
-							data={cart}
-							renderItem={renderProducts}
-							keyExtractor={(item) => item.id.toString()}
-						/>
-					</View>
-				)}
+				<Text>My Orders.</Text>
 			</View>
 
 			<View style={Styles.footer}>
-				{Object.entries(cart).length === 0 ? null : (
-					<Pressable style={Styles.navButton}>
-						<Ionicons name="home" color={"black"} size={20} />
+				<Pressable
+					style={Styles.navButton}
+					onPress={() => console.log("Test")}
+				>
+					<Ionicons
+						name="file-tray-full-outline"
+						color={"black"}
+						size={20}
+					/>
 
-						<Text>Checkout</Text>
-					</Pressable>
-				)}
+					<Text>Test</Text>
+				</Pressable>
 			</View>
 		</SafeAreaView>
 	);
