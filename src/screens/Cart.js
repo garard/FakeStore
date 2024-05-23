@@ -9,24 +9,61 @@ import {
 	decrement,
 	addToCart,
 	displayCart,
+	selectCartTotalCount,
+	clearCart,
 } from "../store/CartSlice";
-import CartBadge from "../store/CartBadge";
 import { NavigationContainer } from "@react-navigation/native";
-
+import { createNewOrder, retrieveOrders } from "../service/authService";
+import { setOrders } from "../store/OrdersSlice";
 export default function Cart({ navigation }) {
+	const accountDetails = useSelector((state) => state.user);
+	const token = accountDetails.token;
 	const [products, setProducts] = useState([]);
 	const [cart, setCart] = useState([]);
 	const [total, setTotal] = useState("0");
 	const dispatch = useDispatch();
-
+	const totalCount = useSelector(selectCartTotalCount);
 	const addToCart = (id) => {
 		dispatch(increment({ id }));
+	};
+	const transformCartToOrder = (cart) => {
+		return {
+			items: cart.map((item) => ({
+				prodID: item.id,
+				price: item.price,
+				quantity: item.count,
+			})),
+		};
 	};
 
 	const removeFromCart = (id) => {
 		dispatch(decrement({ id }));
 	};
-
+	const sendOrder = async (token, cart) => {
+		try {
+			const order = transformCartToOrder(cart);
+			console.log(order);
+			const userData = await createNewOrder({ token, order });
+			if (userData.status === "OK") {
+				//dispatch()
+			} else {
+				alert(userData.message);
+			}
+		} catch (error) {
+			console.error("Failed to create order:", error);
+			throw new Error("Failed to create order: " + error.message);
+		} finally {
+			alert("Succfully created order");
+			dispatch(clearCart());
+			const orderData = await retrieveOrders({
+				token,
+			});
+			if (orderData.status === "OK") {
+				console.log("Dispatching orders");
+				dispatch(setOrders(orderData));
+			}
+		}
+	};
 	const userCart = useSelector((state) => state.cart);
 
 	useEffect(() => {
@@ -42,6 +79,8 @@ export default function Cart({ navigation }) {
 			count: userCart[product.id].count,
 		}));
 		setCart(cartProductsQuantity);
+		console.log("cart: ");
+		console.log(cart);
 	}, [userCart, products]);
 
 	useEffect(() => {
@@ -71,22 +110,6 @@ export default function Cart({ navigation }) {
 		}
 		getProducts();
 	}, []);
-
-	// useEffect(() => {
-	//     async function getProducts() {
-	//         try {
-	//             const data = await fetch("https://fakestoreapi.com/products/")
-	//             const productsData = await data.json()
-	//             setProducts(productsData)
-	//         }
-	//         catch (e) {
-	//             const createTwoButtonAlert = () =>
-	//                 Alert.alert('Error', 'Failed to fetch products');
-	//             console.error('error fetching products', e)
-	//         }
-	//     }
-	//     getProducts()
-	// }, []);
 
 	const renderProducts = ({ item }) => {
 		return (
@@ -145,7 +168,7 @@ export default function Cart({ navigation }) {
 				) : (
 					<View>
 						<Text style={[Styles.categoryText, { paddingTop: 0 }]}>
-							<CartBadge /> Items{"\n"}Total Cost: ${total}
+							{totalCount} Items{"\n"}Total Cost: ${total}
 						</Text>
 						<FlatList
 							data={cart}
@@ -158,7 +181,10 @@ export default function Cart({ navigation }) {
 
 			<View style={Styles.footer}>
 				{Object.entries(cart).length === 0 ? null : (
-					<Pressable style={Styles.navButton}>
+					<Pressable
+						style={Styles.navButton}
+						onPress={() => sendOrder(token, cart)}
+					>
 						<Ionicons name="home" color={"black"} size={20} />
 
 						<Text>Checkout</Text>

@@ -11,13 +11,15 @@ import {
 	ActivityIndicator,
 } from "react-native";
 import { logUserState, loginUser, checkAccount } from "../store/userSlice";
+import { setOrders } from "../store/OrdersSlice";
+
 import { useDispatch, useSelector } from "react-redux";
 import React, { useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import Styles from "../components/Styles";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRoute } from "@react-navigation/native";
-import { signinUser, signupUser } from "../service/authService";
+import { retrieveOrders, signinUser, signupUser } from "../service/authService";
 
 export default function ExistingUser({ route, navigation }) {
 	const dispatch = useDispatch();
@@ -44,8 +46,27 @@ export default function ExistingUser({ route, navigation }) {
 				console.log("recieved");
 				console.log(userData);
 				dispatch(
-					loginUser({ email: userData.email, token: userData.token })
+					loginUser({
+						email: userData.email,
+						token: userData.token,
+						name: userData.name,
+					})
 				);
+				const orderData = await retrieveOrders({
+					token: userData.token,
+				});
+				if (orderData.status === "OK") {
+					console.log("Dispatching orders");
+					dispatch(setOrders(orderData)); // Ensure you're passing the correct structure
+				} else {
+					console.error(
+						"Failed to retrieve orders:",
+						orderData.message
+					);
+				}
+				//console.log("SOME ORDER DATA TO SEND");
+				//console.log(orderData);
+
 				//navToUserProfile();
 				// nav to User Profile Screen
 			} else {
@@ -54,6 +75,7 @@ export default function ExistingUser({ route, navigation }) {
 		} catch (error) {
 			console.error("Failed to create user:", error);
 			throw new Error("Failed to create user: " + error.message);
+		} finally {
 		}
 	};
 

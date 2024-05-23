@@ -1,5 +1,7 @@
-import { createSlice } from "@reduxjs/toolkit";
-
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { useDispatch, useSelector } from "react-redux";
+import { retrieveOrders } from "../service/authService";
+import { useEffect } from "react";
 const initialState = { totalCount: 0 };
 
 export const cartSlice = createSlice({
@@ -39,6 +41,7 @@ export const cartSlice = createSlice({
 		displayCart: (state) => {
 			console.log(state);
 		},
+		getOrderHistory: (state, action) => {},
 	},
 });
 
@@ -48,3 +51,8 @@ export const { addToCart, increment, decrement, clearCart, displayCart } =
 export const selectCartTotalCount = (state) => state.cart.totalCount;
 
 export default cartSlice.reducer;
+
+// Initalstate
+// checkoutcart {totalcount: 0}
+// myOrders {null}
+// reformattedCart {}

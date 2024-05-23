@@ -32,9 +32,12 @@ export default function NewUser({ route, navigation }) {
 			if (userData.token) {
 				alert("Account created successfully");
 				dispatch(
-					loginUser({ email: userData.email, token: userData.token })
+					loginUser({
+						email: userData.email,
+						token: userData.token,
+						name: userData.name,
+					})
 				);
-				// nav to User Profile Screen
 			} else {
 				alert(userData.message);
 			}

@@ -11,3 +11,4 @@ export { default as UserProfile } from "./screens/UserProfile.js";
 export { default as NewUser } from "./screens/NewUser.js";
 export { default as ExistingUser } from "./screens/ExistingUser.js";
 export { default as UserAccountStack } from "./ui/UserAccount.js";
+export { default as NotLoggedIn } from "./screens/NotLoggedIn.js";

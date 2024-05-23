@@ -12,23 +12,41 @@ import {
 	ExistingUser,
 	UserAccountStack,
 	UserProfile,
+	NotLoggedIn,
 } from "../Index";
 import { selectCartTotalCount } from "../store/CartSlice";
+import { newOrderTotal } from "../store/OrdersSlice";
 import { NavigationContainer } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-import CartBadge from "../store/CartBadge.js";
-
 import { useSelector, useDispatch } from "react-redux";
-
 const Tabs = createBottomTabNavigator();
-const Badge = () => {
+
+const cartBadge = () => {
 	const totalCount = useSelector(selectCartTotalCount);
 	return totalCount === 0 ? null : totalCount;
 };
+const ordersBadge = () => {
+	const totalCount = useSelector(newOrderTotal);
+	if (totalCount === null) {
+		return null;
+	} else {
+		return totalCount === 0 ? null : totalCount;
+	}
+};
 export default function BottomTab() {
-	const dispatch = useDispatch();
+	const token = useSelector((state) => state.user.token);
+
+	// from documentation
+	const handleTabPress = (e, navigation, routeName) => {
+		if (!token) {
+			e.preventDefault();
+			alert("You need to log in to access this feature.");
+		} else {
+			navigation.navigate(routeName);
+		}
+	};
 	return (
-		<Tabs.Navigator initialRouteName="ShopStack">
+		<Tabs.Navigator initialRouteName="User">
 			<Tabs.Screen
 				name="Shop"
 				component={ShopStack}
@@ -44,7 +62,10 @@ export default function BottomTab() {
 								size={size}
 							/>
 						),
-				}}
+				}} // from documentation
+				listeners={({ navigation }) => ({
+					tabPress: (e) => handleTabPress(e, navigation, "Shop"),
+				})}
 			/>
 			<Tabs.Screen
 				name="Cart"
@@ -61,8 +82,11 @@ export default function BottomTab() {
 								size={size}
 							/>
 						),
-					tabBarBadge: Badge(),
+					tabBarBadge: cartBadge(),
 				}}
+				listeners={({ navigation }) => ({
+					tabPress: (e) => handleTabPress(e, navigation, "Cart"),
+				})}
 			/>
 			<Tabs.Screen
 				name="My Orders"
@@ -83,11 +107,15 @@ export default function BottomTab() {
 								size={size}
 							/>
 						),
+					tabBarBadge: ordersBadge(),
 				}}
+				listeners={({ navigation }) => ({
+					tabPress: (e) => handleTabPress(e, navigation, "My Orders"),
+				})}
 			/>
 			<Tabs.Screen
 				name="User"
-				component={UserAccountStack} // Conditional if user is logged in
+				component={UserAccountStack}
 				options={{
 					headerShown: false,
 					tabBarIcon: ({ focused, size, color }) =>

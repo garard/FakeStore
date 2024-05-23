@@ -126,7 +126,18 @@ const Styles = StyleSheet.create({
 		backgroundColor: "white",
 		textAlign: "center",
 	},
-
+	orderDisplay: {
+		height: 40,
+		fontSize: 12,
+		padding: 10,
+		borderWidth: 1,
+		borderColor: "black",
+		width: 350,
+		borderRadius: 15,
+		marginBottom: 10,
+		backgroundColor: "white",
+		flexDirection: "row",
+	},
 	productDisplay: {
 		height: 125,
 		fontSize: 12,
