@@ -8,8 +8,7 @@ export const orderSlice = createSlice({
 	reducers: {
 		setOrders: (state, action) => {
 			const { orders } = action.payload;
-			console.log("SOME ORDER DATA TO SET");
-			console.log(orders);
+
 			const newOrders = orders.filter(
 				(order) => order.is_paid === 0 && order.is_delivered === 0
 			);
@@ -27,13 +26,12 @@ export const orderSlice = createSlice({
 		addUserOrder: (state, action) => {},
 		updateUserOrders: (state, action) => {
 			let updatedOrder = action.payload;
-			console.log("update");
-			console.log(updatedOrder);
+
 			if (updatedOrder.is_paid === 1) {
 				const updatePaid = state.paid.filter(
 					(order) => order.id !== updatedOrder.id
 				);
-				console.log(updatePaid);
+
 				state.paid = [...updatePaid];
 				updatedOrder = {
 					...updatedOrder,
@@ -44,7 +42,6 @@ export const orderSlice = createSlice({
 				const updateNew = state.new.filter(
 					(order) => order.id !== updatedOrder.id
 				);
-				console.log(updateNew);
 				state.new = [...updateNew];
 				updatedOrder = {
 					...updatedOrder,

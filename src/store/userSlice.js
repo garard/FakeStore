@@ -4,7 +4,7 @@ const initialState = {
 	email: "null",
 	token: null,
 	name: "null",
-	time: null,
+	loginTime: null,
 };
 
 export const userSlice = createSlice({
@@ -12,17 +12,10 @@ export const userSlice = createSlice({
 	initialState,
 	reducers: {
 		loginUser: (state, action) => {
-			console.log("Adding user name");
-			console.log(action.payload.name);
-			console.log("Adding user email");
-			console.log(action.payload.email);
-			console.log("Adding user token");
-			console.log(action.payload.token);
 			state.name = action.payload.name;
 			state.email = action.payload.email;
 			state.token = action.payload.token;
-			state.time = Math.floor(Date.now() / 1000);
-			console.log(state.time);
+			state.loginTime = Math.floor(Date.now() / 1000);
 		},
 		logoutUser: () => initialState,
 		checkTime: (state) => {
@@ -31,15 +24,9 @@ export const userSlice = createSlice({
 				return "expired";
 			} else return "OK";
 		},
-		checkAccount: (state) => {
-			console.log("Current User: ");
-			console.log("email: ", state.email);
-			console.log("token: ", state.token);
-		},
 	},
 });
 
-export const { loginUser, logoutUser, checkAccount, checkTime } =
-	userSlice.actions;
+export const { loginUser, logoutUser, checkTime } = userSlice.actions;
 
 export default userSlice.reducer;

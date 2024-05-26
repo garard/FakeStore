@@ -16,12 +16,12 @@ export default function UserProfile({ navigation }) {
 	const dispatch = useDispatch();
 	const [update, setUpdate] = useState(0);
 	const userToken = accountDetails.token;
+
 	const logout = () => {
 		dispatch(clearCart());
 		dispatch(logoutUser());
 		dispatch(clearOrders());
 	};
-
 	const cancelUpdate = () => {
 		setUpdateName("");
 		setUpdatePassword("");
@@ -30,7 +30,6 @@ export default function UserProfile({ navigation }) {
 
 	const updateAccount = async (token, name, password) => {
 		try {
-			console.log(userToken);
 			const userData = await updateUserProfile({ token, name, password });
 			if (userData.status === "OK") {
 				alert("Account updated successfully");

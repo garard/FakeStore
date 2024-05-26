@@ -47,9 +47,8 @@ export default function Home({ route, navigation }) {
 				);
 				const categories = await data.json();
 				setCategories(categories.concat(author));
-				console.log(categories.concat(author));
 			} catch (e) {
-				console.log(
+				console.error(
 					"Error fetching from local, is the server running?",
 					e
 				);
@@ -60,7 +59,7 @@ export default function Home({ route, navigation }) {
 					const categories = await data.json();
 					setCategories(categories);
 				} catch (e) {
-					console.log(
+					console.error(
 						"Error fetching from FakeStoreAPI, is the website down?",
 						e
 					);

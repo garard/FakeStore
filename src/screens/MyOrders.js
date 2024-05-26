@@ -42,10 +42,8 @@ export default function MyOrders({ navigation }) {
 				token: token,
 			});
 			if (orderData.status === "OK") {
-				console.log("Dispatching orders");
-				dispatch(setOrders(orderData)); // Ensure you're passing the correct structure
+				dispatch(setOrders(orderData));
 			}
-			console.log("got orders");
 		}
 		getUserOrders(token);
 	}, [token]);
@@ -61,7 +59,6 @@ export default function MyOrders({ navigation }) {
 			orderID: item.id,
 			is_paid: item.is_paid,
 		};
-		console.log(item);
 		const res = await updateOrders(updateOrder);
 		if (res.status === "OK") {
 			alert(
@@ -73,23 +70,6 @@ export default function MyOrders({ navigation }) {
 			dispatch(updateUserOrders(item));
 		}
 	};
-	// useEffect(() => {
-	// 	async function getOrders() {
-	// 		try {
-	// 			//console.log("Loading orders");
-	// 			const userData = await retrieveOrders({ token });
-	// 			if (userData.status === "OK") {
-	// 				setOrders(userData);
-	// 			}
-	// 		} catch (e) {
-	// 			console.log(
-	// 				"Error fetching product from local, is the server running?",
-	// 				e
-	// 			);
-	// 		}
-	// 	}
-	// 	getOrders();
-	// }, []);
 
 	const renderOrders = ({ item }) => {
 		const orderItems = JSON.parse(item.order_items);
@@ -178,15 +158,17 @@ export default function MyOrders({ navigation }) {
 								</View>
 							))}
 						</ScrollView>
-						<Pressable
-							style={[
-								Styles.navButton,
-								{ height: 25, width: 75 },
-							]}
-							onPress={() => progressOrder(token, item)}
-						>
-							<Text>{progressOrderText}</Text>
-						</Pressable>
+						{item.is_delivered === 1 ? null : (
+							<Pressable
+								style={[
+									Styles.navButton,
+									{ height: 25, width: 75 },
+								]}
+								onPress={() => progressOrder(token, item)}
+							>
+								<Text>{progressOrderText}</Text>
+							</Pressable>
+						)}
 					</View>
 				)}
 			</View>
@@ -219,8 +201,8 @@ export default function MyOrders({ navigation }) {
 									name={
 										data.length > 0
 											? expandedOrderId.includes(title)
-												? "caret-down-outline"
-												: "caret-up-outline"
+												? "caret-up-outline"
+												: "caret-down-outline"
 											: null
 									}
 									color={"black"}
@@ -233,24 +215,7 @@ export default function MyOrders({ navigation }) {
 				/>
 			</View>
 
-			<View style={Styles.footer}>
-				<Pressable
-					style={Styles.navButton}
-					onPress={() => console.log(orders)}
-				>
-					<Ionicons
-						name="file-tray-full-outline"
-						color={"black"}
-						size={20}
-					/>
-
-					<Text>Log</Text>
-				</Pressable>
-			</View>
+			<View style={Styles.footer}></View>
 		</SafeAreaView>
 	);
 }
-
-// Body was originally 3 flatlists inside a scrollview,
-// giving error VirtualizedLists should never be nested inside plain ScrollViews
-// discovered sectionlist as a solution

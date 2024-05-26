@@ -1,50 +1,33 @@
-import {
-	Text,
-	View,
-	Pressable,
-	Alert,
-	styles,
-	FlatList,
-	StatusBar,
-	TextInput,
-	Image,
-	ActivityIndicator,
-} from "react-native";
-import { logUserState, loginUser, checkAccount } from "../store/userSlice";
+import { Text, View, Pressable, TextInput } from "react-native";
+import { loginUser } from "../store/userSlice";
 import { setOrders } from "../store/OrdersSlice";
-
+import { setCart } from "../store/CartSlice";
 import { useDispatch, useSelector } from "react-redux";
 import React, { useEffect, useState } from "react";
-import { Ionicons } from "@expo/vector-icons";
 import Styles from "../components/Styles";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRoute } from "@react-navigation/native";
-import { retrieveOrders, signinUser, signupUser } from "../service/authService";
+import {
+	retrieveOrders,
+	signinUser,
+	retrieveCart,
+} from "../service/authService";
 
 export default function ExistingUser({ route, navigation }) {
 	const dispatch = useDispatch();
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-
+	useEffect(() => {}, []);
 	const navToNewUser = () => {
 		navigation.navigate("NewUser");
-	};
-	const navToUserProfile = () => {
-		navigation.navigate("UserProfile");
 	};
 	const clearAll = () => {
 		setEmail("");
 		setPassword("");
-		console.log("all fields cleared");
 	};
 	const loginUserAccount = async (email, password) => {
 		try {
 			const userData = await signinUser({ email, password });
-			console.log(userData);
 			if (userData.token) {
-				//alert("Account created successfully");
-				console.log("recieved");
-				console.log(userData);
 				dispatch(
 					loginUser({
 						email: userData.email,
@@ -56,7 +39,6 @@ export default function ExistingUser({ route, navigation }) {
 					token: userData.token,
 				});
 				if (orderData.status === "OK") {
-					console.log("Dispatching orders");
 					dispatch(setOrders(orderData)); // Ensure you're passing the correct structure
 				} else {
 					console.error(
@@ -64,18 +46,23 @@ export default function ExistingUser({ route, navigation }) {
 						orderData.message
 					);
 				}
-				//console.log("SOME ORDER DATA TO SEND");
-				//console.log(orderData);
-
-				//navToUserProfile();
-				// nav to User Profile Screen
+				const cartData = await retrieveCart({
+					token: userData.token,
+				});
+				if (cartData.status === "OK") {
+					dispatch(setCart(cartData));
+				} else {
+					console.error(
+						"Failed to retrieve orders:",
+						orderData.message
+					);
+				}
 			} else {
 				alert(userData.message);
 			}
 		} catch (error) {
-			console.error("Failed to create user:", error);
-			throw new Error("Failed to create user: " + error.message);
-		} finally {
+			console.error("Failed to login user:", error);
+			throw new Error("Failed to login user: " + error.message);
 		}
 	};
 

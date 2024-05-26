@@ -3,7 +3,6 @@ export { default as Home } from "./screens/Home.js";
 export { default as Category } from "./screens/Category.js";
 export { default as Cart } from "./screens/Cart.js";
 export { default as Product } from "./screens/Product.js";
-export { default as Splash } from "./screens/Splash.js";
 export { default as ShopStack } from "./ui/shopstack.js";
 export { default as BottomTab } from "./ui/BottomTab.js";
 export { default as MyOrders } from "./screens/MyOrders.js";

@@ -1,24 +1,14 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import {
-	Home,
-	Category,
-	Product,
-	Splash,
-	Styles,
-	Cart,
-	ShopStack,
-	MyOrders,
-	NewUser,
-	ExistingUser,
-	UserAccountStack,
-	UserProfile,
-	NotLoggedIn,
-} from "../Index";
+import { Cart, ShopStack, MyOrders, UserAccountStack } from "../Index";
 import { selectCartTotalCount } from "../store/CartSlice";
 import { newOrderTotal } from "../store/OrdersSlice";
-import { NavigationContainer } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { logoutUser } from "../store/userSlice";
+import { clearCart } from "../store/CartSlice";
+import { clearOrders } from "../store/OrdersSlice";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 const Tabs = createBottomTabNavigator();
 
 const cartBadge = () => {
@@ -34,8 +24,9 @@ const ordersBadge = () => {
 	}
 };
 export default function BottomTab() {
+	const dispatch = useDispatch();
 	const token = useSelector((state) => state.user.token);
-
+	const loginTime = useSelector((state) => state.user.loginTime);
 	// from documentation
 	const handleTabPress = (e, navigation, routeName) => {
 		if (!token) {
@@ -45,6 +36,31 @@ export default function BottomTab() {
 			navigation.navigate(routeName);
 		}
 	};
+	const nav = useNavigation();
+	const logout = () => {
+		alert("Session has expired");
+		nav.navigate("User");
+		dispatch(clearCart());
+		dispatch(logoutUser());
+		dispatch(clearOrders());
+	};
+	useEffect(() => {
+		const timerInterval = setInterval(() => {
+			const currentTime = Math.floor(Date.now() / 1000);
+			const loginDuration = currentTime - loginTime;
+			if (token) {
+				console.log(`logged in for ${loginDuration} minutes`);
+				if (loginDuration >= 3600) {
+					clearInterval(timerInterval);
+					logout();
+				}
+			} else {
+				clearInterval(timerInterval);
+			}
+		}, 60000);
+		return () => clearInterval(timerInterval);
+	}, [token, loginTime, dispatch]);
+
 	return (
 		<Tabs.Navigator initialRouteName="User">
 			<Tabs.Screen

@@ -1,6 +1,12 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit'
 
-export const loadCategories = createAsyncThunk(
+const initalState = {
+productData: {},
+loading: false,
+error: null,
+}
+
+export const loadProductData = createAsyncThunk(
     "loadCategory",
     async (categories, thunkAPI) => {
         if (!categories)

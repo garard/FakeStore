@@ -7,14 +7,13 @@ import { useSelector, useDispatch } from "react-redux";
 import {
 	increment,
 	decrement,
-	addToCart,
 	displayCart,
 	selectCartTotalCount,
 	clearCart,
 } from "../store/CartSlice";
-import { NavigationContainer } from "@react-navigation/native";
 import { createNewOrder, retrieveOrders } from "../service/authService";
 import { setOrders } from "../store/OrdersSlice";
+import { syncCart } from "../service/authService";
 export default function Cart({ navigation }) {
 	const accountDetails = useSelector((state) => state.user);
 	const token = accountDetails.token;
@@ -42,10 +41,8 @@ export default function Cart({ navigation }) {
 	const sendOrder = async (token, cart) => {
 		try {
 			const order = transformCartToOrder(cart);
-			console.log(order);
 			const userData = await createNewOrder({ token, order });
 			if (userData.status === "OK") {
-				//dispatch()
 			} else {
 				alert(userData.message);
 			}
@@ -59,7 +56,6 @@ export default function Cart({ navigation }) {
 				token,
 			});
 			if (orderData.status === "OK") {
-				console.log("Dispatching orders");
 				dispatch(setOrders(orderData));
 			}
 		}
@@ -73,14 +69,24 @@ export default function Cart({ navigation }) {
 	}, [cart]);
 
 	useEffect(() => {
+		async function syncUserCart() {
+			if (cart.length > 0) {
+				const unsyncCart = transformCartToOrder(cart);
+				const res = await syncCart({ cart: unsyncCart, token: token });
+
+				res.status === "OK" ? null : alert(res.message);
+			}
+		}
+		syncUserCart();
+	}, [cart]);
+
+	useEffect(() => {
 		const productsData = products.filter((product) => userCart[product.id]);
 		const cartProductsQuantity = productsData.map((product) => ({
 			...product,
 			count: userCart[product.id].count,
 		}));
 		setCart(cartProductsQuantity);
-		console.log("cart: ");
-		console.log(cart);
 	}, [userCart, products]);
 
 	useEffect(() => {
@@ -155,14 +161,6 @@ export default function Cart({ navigation }) {
 			</View>
 
 			<View style={Styles.body}>
-				<Pressable
-					style={Styles.navButton}
-					onPress={() => dispatch(displayCart())}
-				>
-					<Ionicons name="home" color={"black"} size={20} />
-
-					<Text>Home</Text>
-				</Pressable>
 				{Object.entries(cart).length === 0 ? (
 					<Text>Your shopping cart is empty.</Text>
 				) : (

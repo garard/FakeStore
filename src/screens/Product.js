@@ -2,9 +2,7 @@ import {
 	Text,
 	View,
 	Pressable,
-	Alert,
 	ActivityIndicator,
-	StyleSheet,
 	Image,
 	ScrollView,
 } from "react-native";
@@ -59,25 +57,6 @@ export default function Product({ route, navigation }) {
 		}
 		getProduct();
 	}, [id]);
-
-	// useEffect(() => {
-	// 	async function getProduct() {
-	// 		try {
-	// 			const data = await fetch(
-	// 				`https://fakestoreapi.com/products/` + id
-	// 			);
-	// 			const productData = await data.json();
-	// 			console.log(productData);
-	// 			setProduct(productData);
-	// 		} catch (error) {
-	// 			Alert.alert("Error", "Failed to fetch product details");
-	// 			console.error("Error fetching product details", error);
-	// 		} finally {
-	// 			setLoading(false);
-	// 		}
-	// 	}
-	// 	getProduct();
-	// }, [id]);
 
 	return (
 		<SafeAreaView style={Styles.container}>

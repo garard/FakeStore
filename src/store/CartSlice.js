@@ -11,10 +11,8 @@ export const cartSlice = createSlice({
 		addToCart: (state, action) => {
 			const { id, price, count } = action.payload;
 			if (state[id]) {
-				// If the item already exists in the cart, increment its count
 				state[id].count += count;
 			} else {
-				// If the item does not exist, add it to the cart
 				state[id] = { price, count };
 			}
 			state.totalCount++;
@@ -41,18 +39,33 @@ export const cartSlice = createSlice({
 		displayCart: (state) => {
 			console.log(state);
 		},
-		getOrderHistory: (state, action) => {},
+		setCart: (state, action) => {
+			const userCart = action.payload.items.map(
+				({ prodID, price, quantity }) => ({
+					id: prodID,
+					price: price,
+					count: quantity,
+				})
+			);
+			const result = userCart.reduce((acc, item) => {
+				acc[item.id] = { count: item.count, price: item.price };
+				acc.totalCount = (acc.totalCount || 0) + item.count;
+				return acc;
+			}, {});
+			return result;
+		},
 	},
 });
 
-export const { addToCart, increment, decrement, clearCart, displayCart } =
-	cartSlice.actions;
+export const {
+	addToCart,
+	increment,
+	decrement,
+	clearCart,
+	displayCart,
+	setCart,
+} = cartSlice.actions;
 
 export const selectCartTotalCount = (state) => state.cart.totalCount;
 
 export default cartSlice.reducer;
-
-// Initalstate
-// checkoutcart {totalcount: 0}
-// myOrders {null}
-// reformattedCart {}

@@ -46,9 +46,6 @@ export default function NewUser({ route, navigation }) {
 			throw new Error("Failed to create user: " + error.message);
 		}
 	};
-	const handleCheckAccount = () => {
-		dispatch(checkAccount());
-	};
 	const navToExistingUser = () => {
 		navigation.navigate("Login");
 	};

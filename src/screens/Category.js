@@ -58,26 +58,6 @@ export default function Category({ route, navigation }) {
 		getProducts();
 	}, []);
 
-	// useEffect(() => {
-	// 	async function getProducts() {
-	// 		try {
-	// 			const data = await fetch(
-	// 				"https://fakestoreapi.com/products/category/" + category
-	// 			);
-	// 			const productsData = await data.json();
-	// 			console.log(productsData);
-	// 			setProducts(productsData);
-	// 		} catch (e) {
-	// 			const createTwoButtonAlert = () =>
-	// 				Alert.alert("Error", "Failed to fetch products");
-	// 			console.error("error fetching products", e);
-	// 		} finally {
-	// 			setLoading(false);
-	// 		}
-	// 	}
-	// 	getProducts();
-	// }, []);
-
 	const renderProducts = ({ item }) => {
 		return (
 			<Pressable onPress={() => navToProduct(item.id)}>
